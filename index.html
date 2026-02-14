@@ -164,41 +164,94 @@ function f(x,k){
 return Math.cbrt(x*x)+0.7*Math.sin(k*x)*Math.sqrt(3-x*x);  
 }  
   
-function iniciarGrafica(){  
-const canvas=document.getElementById('grafica');  
-const ctx=canvas.getContext('2d');  
-const size=Math.min(window.innerWidth,window.innerHeight)*0.9;  
-canvas.width=size;  
-canvas.height=size;  
-  
-let k=0;  
-  
-function dibujar(){  
-ctx.fillStyle='#0f1020';  
-ctx.fillRect(0,0,canvas.width,canvas.height);  
-  
-ctx.strokeStyle='#ff4d88';  
-ctx.lineWidth=2.4;  
-ctx.beginPath();  
-  
-let scale=canvas.width/4;  
-  
-for(let i=-Math.sqrt(3);i<=Math.sqrt(3);i+=0.01){  
-let y=f(i,k);  
-let px=canvas.width/2+i*scale;  
-let py=canvas.height/2-y*scale;  
-if(i===-Math.sqrt(3))ctx.moveTo(px,py);  
-else ctx.lineTo(px,py);  
-}  
-  
-ctx.stroke();  
-  
-k+=0.12;  
-if(k>40) k=8;  
-  
-requestAnimationFrame(dibujar);  
-}  
-dibujar();  
-}  
+function iniciarGrafica(){
+const canvas=document.getElementById('grafica');
+const ctx=canvas.getContext('2d');
+
+const size=Math.min(window.innerWidth,window.innerHeight)*0.9;
+canvas.width=size;
+canvas.height=size;
+
+let k=0;
+let relleno=0; // progreso de llenado
+let llenando=true;
+
+function dibujar(){
+
+ctx.fillStyle='#0f1020';
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+let scale=canvas.width/4;
+
+// ---------- CURVA ----------
+ctx.beginPath();
+
+let puntosArriba=[];
+let puntosAbajo=[];
+
+for(let x=-Math.sqrt(3);x<=Math.sqrt(3);x+=0.01){
+
+let y=f(x,k);
+
+let px=canvas.width/2+x*scale;
+let py=canvas.height/2-y*scale;
+
+let py2=canvas.height/2+y*scale;
+
+puntosArriba.push([px,py]);
+puntosAbajo.unshift([px,py2]); // reflejo
+}
+
+// unir ambas curvas
+let puntos=puntosArriba.concat(puntosAbajo);
+
+ctx.moveTo(puntos[0][0],puntos[0][1]);
+
+for(let i=1;i<puntos.length;i++){
+ctx.lineTo(puntos[i][0],puntos[i][1]);
+}
+
+ctx.closePath();
+
+// ---------- RELLENO PROGRESIVO ----------
+ctx.save();
+ctx.clip();
+
+let grad=ctx.createLinearGradient(0,canvas.height,0,canvas.height*(1-relleno));
+grad.addColorStop(0,'#ff4d88');
+grad.addColorStop(1,'#ff99bb');
+
+ctx.fillStyle=grad;
+ctx.fillRect(0,canvas.height*(1-relleno),canvas.width,canvas.height*relleno);
+ctx.restore();
+
+// ---------- BORDE ----------
+ctx.strokeStyle='#ff4d88';
+ctx.lineWidth=2.4;
+ctx.stroke();
+
+// ---------- CONTROL CICLO ----------
+if(llenando){
+relleno+=0.01;
+if(relleno>=1){
+llenando=false;
+setTimeout(()=>{},300);
+}
+}else{
+relleno-=0.01;
+if(relleno<=0){
+llenando=true;
+}
+}
+
+// ---------- ANIMACION FORMA ----------
+k+=0.12;
+if(k>40) k=8;
+
+requestAnimationFrame(dibujar);
+}
+
+dibujar();
+}
 </script>  </body>  
 </html>
