@@ -188,39 +188,88 @@ return Math.cbrt(x*x)+0.7*Math.sin(k*x)*Math.sqrt(3-x*x);
 function iniciarGrafica(){
 const canvas=document.getElementById('grafica');
 const ctx=canvas.getContext('2d');
+
+/* resolución correcta para móviles */
+const dpr = window.devicePixelRatio || 1;
 const size=Math.min(window.innerWidth,window.innerHeight)*0.9;
-canvas.width=size;
-canvas.height=size;
+
+canvas.style.width=size+"px";
+canvas.style.height=size+"px";
+canvas.width=size*dpr;
+canvas.height=size*dpr;
+
+ctx.scale(dpr,dpr);
 
 let k=0;
 
-function dibujar(){
+function dibujarPlano(){
 ctx.fillStyle='#0f1020';
-ctx.fillRect(0,0,canvas.width,canvas.height);
+ctx.fillRect(0,0,size,size);
 
+/* cuadricula */
+ctx.strokeStyle='rgba(255,255,255,0.08)';
+ctx.lineWidth=1;
+
+let step=size/10;
+for(let i=0;i<=size;i+=step){
+ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,size); ctx.stroke();
+ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(size,i); ctx.stroke();
+}
+
+/* ejes */
+ctx.strokeStyle='rgba(255,255,255,0.35)';
+ctx.lineWidth=2;
+
+ctx.beginPath();
+ctx.moveTo(size/2,0);
+ctx.lineTo(size/2,size);
+ctx.stroke();
+
+ctx.beginPath();
+ctx.moveTo(0,size/2);
+ctx.lineTo(size,size/2);
+ctx.stroke();
+}
+
+function dibujar(){
+dibujarPlano();
+
+/* corazon */
 ctx.strokeStyle='#ff4d88';
-ctx.lineWidth=2.4;
+ctx.lineWidth=2.6;
 ctx.beginPath();
 
-let scale=canvas.width/4;
+let scale=size/4;
 
+/* parte superior */
 for(let i=-Math.sqrt(3);i<=Math.sqrt(3);i+=0.01){
 let y=f(i,k);
-let px=canvas.width/2+i*scale;
-let py=canvas.height/2-y*scale;
-if(i===-Math.sqrt(3))ctx.moveTo(px,py);
+let px=size/2+i*scale;
+let py=size/2-y*scale;
+if(i===-Math.sqrt(3)) ctx.moveTo(px,py);
 else ctx.lineTo(px,py);
+}
+
+/* parte inferior para cerrarlo */
+for(let i=Math.sqrt(3);i>=-Math.sqrt(3);i-=0.01){
+let y=-f(i,k);
+let px=size/2+i*scale;
+let py=size/2-y*scale;
+ctx.lineTo(px,py);
 }
 
 ctx.stroke();
 
-k+=0.12;
-if(k>40) k=8;
+/* velocidad animacion */
+k+=0.09;
+if(k>40) k=9;
 
 requestAnimationFrame(dibujar);
 }
+
 dibujar();
 }
+  
 </script>
 
 </body>
