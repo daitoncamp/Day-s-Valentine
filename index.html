@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Para Kate 💘</title>
+<title>Day'S Valentie</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
@@ -12,7 +12,18 @@ body{
 min-height:100vh;
 background:linear-gradient(135deg,#ff9a9e,#fad0c4);
 display:flex;align-items:center;justify-content:center;
-padding:20px;overflow:hidden;transition:background .6s;
+padding:20px;
+transition:background .6s;
+overflow-y:auto; /* 🔥 ahora permite bajar */
+}
+
+/* CAPA DE CORAZONES (no bloquea scroll) */
+#capaCorazones{
+position:fixed;
+inset:0;
+pointer-events:none;
+overflow:hidden;
+z-index:1;
 }
 
 /* TARJETA */
@@ -45,53 +56,18 @@ border-radius:50%;font-size:1.2rem;padding:10px;cursor:pointer;
 box-shadow:0 5px 15px rgba(0,0,0,.2);z-index:3;
 }
 
-/* BOTON */
-.botonCorazon{
-margin-top:18px;
-background:#ff5f7e;
-color:#fff;
-border:none;
-padding:12px 18px;
-border-radius:12px;
-font-size:1rem;
-cursor:pointer;
-box-shadow:0 5px 15px rgba(0,0,0,.2);
-transition:.3s;
-}
-.botonCorazon:hover{transform:scale(1.07);}
-
 /* CORAZONES */
-.heart{position:absolute;bottom:-30px;font-size:22px;
-animation:floatUp linear infinite;opacity:.75;z-index:1;}
-@keyframes floatUp{from{transform:translateY(0);opacity:.8;}
-to{transform:translateY(-120vh);opacity:0;}}
-
-/* ESCENA MATEMATICA */
-#mathScene{
-position:fixed;
-inset:0;
-background:#0f1020;
-display:none;
-align-items:center;
-justify-content:center;
-flex-direction:column;
-z-index:50;
-color:white;
+.heart{
+position:absolute;
+bottom:-30px;
+font-size:22px;
+animation:floatUp linear infinite;
+opacity:.75;
 }
 
-canvas{
-width:90vw;
-max-width:520px;
-height:90vw;
-max-height:520px;
-}
-
-.textoMath{
-margin-top:16px;
-font-size:18px;
-opacity:.85;
-text-align:center;
-padding:0 15px;
+@keyframes floatUp{
+from{transform:translateY(0);opacity:.8;}
+to{transform:translateY(-120vh);opacity:0;}
 }
 
 /* MODO NOCHE */
@@ -106,19 +82,25 @@ body.dark .toggle{background:#2b2b3d;color:#fff;}
 
 <body>
 
+<div id="capaCorazones"></div>
+
 <button class="toggle" onclick="toggleDark()">🌙</button>
 
 <div class="card">
-    <div class="nombre">Kate ✨</div>
-    <div class="emojis">💘🌹✨</div>
+<div class="nombre">Para Kate ✨</div>
+<div class="emojis">✨</div>
 
 <p>
 Hoy es una bonita oportunidad para decirte algo que tal vez no digo tan seguido.
 Eres una persona que admiro muchísimo, por tu forma de ser, por tu manera de ver las cosas
-y por esa tranquilidad que transmites incluso sin darte cuenta. Desde que te conocí, me di cuenta de que no todos los días aparece alguien así en la vida.
+y por esa tranquilidad que transmites incluso sin darte cuenta.
+
+Desde que te conocí, me di cuenta de que no todos los días aparece alguien así en la vida.
 Hay personas que simplemente pasan, pero otras dejan algo especial, y tú eres de esas.
 Me alegra poder compartir momentos contigo, incluso los más simples, porque contigo
-se sienten diferentes. Gracias por tu compañía, por tu esencia y por ser alguien tan increíble.
+se sienten diferentes.
+
+Gracias por tu compañía, por tu esencia y por ser alguien tan increíble.
 A veces los pequeños encuentros terminan siendo grandes coincidencias,
 y la verdad me alegra mucho que hayas llegado a mi vida 💕
 </p>
@@ -127,19 +109,16 @@ y la verdad me alegra mucho que hayas llegado a mi vida 💕
 Con mucho cariño en este día especial,<br>
 <strong>Daiton</strong> 💖
 </div>
-
-<button class="botonCorazon" onclick="iniciarAnimacion()">Haz click aquí ;))</button>
-
-</div>
-
-<div id="mathScene">
-<canvas id="grafica"></canvas>
-<div class="textoMath">Incluso una función puede terminar dibujando un corazón ❤️</div>
 </div>
 
 <script>
+const capa=document.getElementById("capaCorazones");
+
 function crearCorazones(){
-const lista=["💖","💗","💕","❤️","💘"];
+const claros=["💖","💗","💕","❤️","💘"];
+const oscuros=["💜","💙","✨","💫"];
+const lista=document.body.classList.contains("dark")?oscuros:claros;
+
 for(let i=0;i<18;i++){
 const h=document.createElement("div");
 h.className="heart";
@@ -148,65 +127,46 @@ h.style.left=Math.random()*100+"vw";
 h.style.animationDuration=(6+Math.random()*6)+"s";
 h.style.fontSize=(16+Math.random()*20)+"px";
 h.style.animationDelay=Math.random()*5+"s";
-document.body.appendChild(h);
+capa.appendChild(h);
 setTimeout(()=>h.remove(),12000);
-}}
+}
+}
 crearCorazones();
+
+function explosionCorazones(){
+const claros=["💖","💗","💕","❤️","💘"];
+const oscuros=["💜","💙","✨","💫"];
+const lista=document.body.classList.contains("dark")?oscuros:claros;
+
+const cx=window.innerWidth/2;
+const cy=window.innerHeight/2;
+
+for(let i=0;i<30;i++){
+const h=document.createElement("div");
+h.className="heart";
+h.innerText=lista[Math.floor(Math.random()*lista.length)];
+h.style.left=cx+"px";
+h.style.top=cy+"px";
+h.style.position="fixed";
+
+const a=Math.random()*2*Math.PI;
+const d=80+Math.random()*120;
+
+h.animate([
+{transform:"translate(0,0)",opacity:1},
+{transform:`translate(${Math.cos(a)*d}px,${Math.sin(a)*d}px)`,opacity:0}
+],{duration:900,easing:"ease-out"});
+
+capa.appendChild(h);
+setTimeout(()=>h.remove(),900);
+}
+}
 
 function toggleDark(){
+explosionCorazones();
 document.body.classList.toggle("dark");
-document.querySelectorAll(".heart").forEach(h=>h.remove());
+capa.innerHTML="";
 crearCorazones();
-}
-
-/* ANIMACION CORAZON MATEMATICO */
-
-function iniciarAnimacion(){
-document.querySelector(".card").style.display="none";
-document.querySelectorAll(".heart").forEach(h=>h.remove());
-document.getElementById("mathScene").style.display="flex";
-iniciarGrafica();
-}
-
-function f(x,k){
-return Math.cbrt(x*x)+0.7*Math.sin(k*x)*Math.sqrt(3-x*x);
-}
-
-function iniciarGrafica(){
-const canvas=document.getElementById('grafica');
-const ctx=canvas.getContext('2d');
-const size=Math.min(window.innerWidth,window.innerHeight)*0.9;
-canvas.width=size;
-canvas.height=size;
-
-let k=0;
-
-function dibujar(){
-ctx.fillStyle='#0f1020';
-ctx.fillRect(0,0,canvas.width,canvas.height);
-
-ctx.strokeStyle='#ff4d88';
-ctx.lineWidth=2.4;
-ctx.beginPath();
-
-let scale=canvas.width/4;
-
-for(let i=-Math.sqrt(3);i<=Math.sqrt(3);i+=0.01){
-let y=f(i,k);
-let px=canvas.width/2+i*scale;
-let py=canvas.height/2-y*scale;
-if(i===-Math.sqrt(3))ctx.moveTo(px,py);
-else ctx.lineTo(px,py);
-}
-
-ctx.stroke();
-
-k+=0.12;
-if(k>40) k=8;
-
-requestAnimationFrame(dibujar);
-}
-dibujar();
 }
 </script>
 
