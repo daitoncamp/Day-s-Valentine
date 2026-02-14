@@ -147,12 +147,10 @@ Con mucho cariño en este día especial,<br>
 
 <div id="mathScene">
 <canvas id="grafica"></canvas>
-<div class="textoMath">Tqm❤️</div>
+<div class="textoMath">Tqm ❤️</div>
 </div>
 
 <script>
-const capa=document.getElementById("capaCorazones");
-
 function crearCorazones(){
 const lista=["💖","💗","💕","❤️","💘"];
 for(let i=0;i<18;i++){
@@ -163,22 +161,22 @@ h.style.left=Math.random()*100+"vw";
 h.style.animationDuration=(6+Math.random()*6)+"s";
 h.style.fontSize=(16+Math.random()*20)+"px";
 h.style.animationDelay=Math.random()*5+"s";
-capa.appendChild(h);
+document.body.appendChild(h);
 setTimeout(()=>h.remove(),12000);
 }}
 crearCorazones();
 
 function toggleDark(){
 document.body.classList.toggle("dark");
-capa.innerHTML="";
+document.querySelectorAll(".heart").forEach(h=>h.remove());
 crearCorazones();
 }
 
-/* ---------- CORAZON MATEMATICO ---------- */
+/* ANIMACION CORAZON MATEMATICO */
 
 function iniciarAnimacion(){
 document.querySelector(".card").style.display="none";
-capa.innerHTML="";
+document.querySelectorAll(".heart").forEach(h=>h.remove());
 document.getElementById("mathScene").style.display="flex";
 iniciarGrafica();
 }
@@ -190,7 +188,6 @@ return Math.cbrt(x*x)+0.7*Math.sin(k*x)*Math.sqrt(3-x*x);
 function iniciarGrafica(){
 const canvas=document.getElementById('grafica');
 const ctx=canvas.getContext('2d');
-
 const size=Math.min(window.innerWidth,window.innerHeight)*0.9;
 canvas.width=size;
 canvas.height=size;
@@ -199,33 +196,26 @@ let k=0;
 
 function dibujar(){
 ctx.fillStyle='#0f1020';
-ctx.fillRect(0,0,size,size);
+ctx.fillRect(0,0,canvas.width,canvas.height);
 
 ctx.strokeStyle='#ff4d88';
-ctx.lineWidth=2.6;
+ctx.lineWidth=2.4;
 ctx.beginPath();
 
-let scale=size/4;
+let scale=canvas.width/4;
 
 for(let i=-Math.sqrt(3);i<=Math.sqrt(3);i+=0.01){
 let y=f(i,k);
-let px=size/2+i*scale;
-let py=size/2-y*scale;
+let px=canvas.width/2+i*scale;
+let py=canvas.height/2-y*scale;
 if(i===-Math.sqrt(3))ctx.moveTo(px,py);
 else ctx.lineTo(px,py);
 }
 
-for(let i=Math.sqrt(3);i>=-Math.sqrt(3);i-=0.01){
-let y=-f(i,k);
-let px=size/2+i*scale;
-let py=size/2-y*scale;
-ctx.lineTo(px,py);
-}
-
 ctx.stroke();
 
-k+=0.08;
-if(k>40)k=9;
+k+=0.12;
+if(k>40) k=8;
 
 requestAnimationFrame(dibujar);
 }
