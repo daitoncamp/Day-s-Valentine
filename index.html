@@ -202,70 +202,49 @@ ctx.scale(dpr,dpr);
 
 let k=0;
 
-function dibujarPlano(){
-ctx.fillStyle='#0f1020';
-ctx.fillRect(0,0,size,size);
-
-/* cuadricula */
-ctx.strokeStyle='rgba(255,255,255,0.08)';
-ctx.lineWidth=1;
-
-let step=size/10;
-for(let i=0;i<=size;i+=step){
-ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,size); ctx.stroke();
-ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(size,i); ctx.stroke();
-}
-
-/* ejes */
-ctx.strokeStyle='rgba(255,255,255,0.35)';
-ctx.lineWidth=2;
-
-ctx.beginPath();
-ctx.moveTo(size/2,0);
-ctx.lineTo(size/2,size);
-ctx.stroke();
-
-ctx.beginPath();
-ctx.moveTo(0,size/2);
-ctx.lineTo(size,size/2);
-ctx.stroke();
-}
-
 function dibujar(){
 dibujarPlano();
 
-/* corazon */
 ctx.strokeStyle='#ff4d88';
-ctx.lineWidth=2.6;
+ctx.lineWidth=2.8;
 ctx.beginPath();
 
 let scale=size/4;
+let first=true;
 
-/* parte superior */
+/*corazón */
 for(let i=-Math.sqrt(3);i<=Math.sqrt(3);i+=0.01){
-let y=f(i,k);
+
+let y=Math.abs(f(i,k));
+
 let px=size/2+i*scale;
 let py=size/2-y*scale;
-if(i===-Math.sqrt(3)) ctx.moveTo(px,py);
+
+if(first){ctx.moveTo(px,py);first=false;}
 else ctx.lineTo(px,py);
 }
 
-/* parte inferior para cerrarlo */
 for(let i=Math.sqrt(3);i>=-Math.sqrt(3);i-=0.01){
-let y=-f(i,k);
+
+let y=-Math.abs(f(i,k));
+
 let px=size/2+i*scale;
 let py=size/2-y*scale;
+
 ctx.lineTo(px,py);
 }
 
+ctx.closePath();
 ctx.stroke();
 
-/* velocidad animacion */
-k+=0.09;
-if(k>40) k=9;
+/* animación: de ondas → corazón */
+k+=0.05;
+if(k>25) k=25;
 
 requestAnimationFrame(dibujar);
 }
+
+
 
 dibujar();
 }
